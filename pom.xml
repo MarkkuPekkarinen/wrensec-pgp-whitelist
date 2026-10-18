@@ -14,14 +14,14 @@
     replaced by your own identifying information: "Portions copyright [year]
     [name of copyright owner]".
 
-    Copyright 2018-2021 Wren Security.
+    Copyright 2018-2023 Wren Security.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wrensecurity</groupId>
     <artifactId>wrensec-pgp-whitelist</artifactId>
-    <version>1.7.5-SNAPSHOT</version>
+    <version>1.9.20-SNAPSHOT</version>
 
     <name>Wren Security Trusted PGP Keys</name>
     <description>Contains the whitelist of the PGP keys recognized and trusted by the Wren Security project for build dependencies.</description>
@@ -48,7 +48,7 @@
         <url>https://github.com/WrenSecurity/wrensec-pgp-whitelist</url>
         <connection>scm:git:git://github.com/WrenSecurity/wrensec-pgp-whitelist.git</connection>
         <developerConnection>scm:git:git@github.com:WrenSecurity/wrensec-pgp-whitelist.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>1.9.1</tag>
     </scm>
 
     <properties>
@@ -90,8 +90,54 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.5.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.4</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.1</version>
+
+                <executions>
+                    <execution>
+                        <id>enforce-plugin-versions</id>
+
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+
+                        <configuration>
+                            <rules>
+                                <requirePluginVersions>
+                                    <message>Best practice is to always define plugin versions!</message>
+                                    <banLatest>true</banLatest>
+                                    <banRelease>true</banRelease>
+                                    <banSnapshots>false</banSnapshots>
+                                    <phases>deploy</phases>
+                                    <unCheckedPluginList>
+                                        org.apache.maven.plugins:maven-compiler-plugin,
+                                        org.apache.maven.plugins:maven-jar-plugin,
+                                        org.apache.maven.plugins:maven-site-plugin,
+                                        org.apache.maven.plugins:maven-surefire-plugin,
+                                    </unCheckedPluginList>
+                                </requirePluginVersions>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.2.8</version>
 
                 <configuration>
                   <passphrase>${gpg.passphrase}</passphrase>
@@ -108,6 +154,28 @@
                         </goals>
                    </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.4</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.1.1</version>
+
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
             </plugin>
         </plugins>
     </build>
